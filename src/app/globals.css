@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+    --background: #2a0a10;
+    --foreground: #ffe4e6;
+    --primary: #be185d;
+    --primary-foreground: #ffffff;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(80, 5, 21, 0.4);
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --font-syne: var(--font-syne);
+}
+
+body {
+    background: radial-gradient(circle at top left, #500515, #000000);
+    background-attachment: fixed;
+    color: var(--foreground);
+    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-button {
+    background: rgba(190, 24, 93, 0.3);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 192, 203, 0.2);
+    transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+    background: rgba(190, 24, 93, 0.6);
+    box-shadow: 0 0 15px rgba(190, 24, 93, 0.5);
+    border-color: rgba(255, 192, 203, 0.5);
+}
+
+select {
+    color-scheme: dark;
+}
+
+option {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 10px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}

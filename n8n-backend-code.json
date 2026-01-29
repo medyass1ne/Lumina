@@ -1,0 +1,501 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ Array.isArray($json.body?.files ?? $json.files) && !!($json.body?.accessToken ?? $json.accessToken) }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "id": "8be6079b-4b55-4512-9df8-0677d15743c3",
+            "name": "Validate Input",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                -512,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://www.googleapis.com/drive/v3/files?q=name='Lumina_outputs'+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false",
+                "jsonParameters": true,
+                "options": {},
+                "headerParametersJson": "={\"Authorization\":\"Bearer {{$json.body?.accessToken || $json.accessToken}}\"}"
+            },
+            "id": "f6289b80-b0cf-463a-8822-6000bb9f786d",
+            "name": "Search Output Folder",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                -320,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{ $json.files.length }}",
+                            "operation": "larger"
+                        }
+                    ]
+                }
+            },
+            "id": "2576f048-f210-4293-a0dc-ee7af1d7dce0",
+            "name": "Folder Exists?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                -112,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "folderId",
+                            "value": "={{ $json.id || $items('Search Output Folder')[0].json.files[0].id }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "d2d85f24-09c2-4788-a277-520f7efe5386",
+            "name": "Normalize FolderId",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 2,
+            "position": [
+                96,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "const body = $node['Webhook'].json.body ?? $node['Webhook'].json;\nconst files = Array.isArray(body.files) ? [...body.files] : [];\nconst { templateID } = body;\nconst scaleValue = Number(body.scale ?? 2);\nconst safeScale = Number.isFinite(scaleValue) && scaleValue > 0 ? scaleValue : 2;\nconst scaleWidth = Math.max(500, Math.round(1000 * safeScale));\n\nfiles.sort((a, b) => {\n  if (a === templateID) return -1;\n  if (b === templateID) return 1;\n  return 0;\n});\n\nreturn files.map(id => ({\n  fileId: id,\n  folderId: $json.folderId,\n  accessToken: body.accessToken,\n  scaleWidth\n}));\n"
+            },
+            "id": "7c5abdd9-4034-42bb-87db-b93058dd0212",
+            "name": "Explode Files",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                304,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "url": "=https://www.googleapis.com/drive/v3/files/{{$json.fileId}}?alt=media&supportsAllDrives=true",
+                "responseFormat": "file",
+                "dataPropertyName": "file",
+                "jsonParameters": true,
+                "options": {},
+                "headerParametersJson": "={\"Authorization\":\"Bearer {{$node['Explode Files'].json.accessToken}}\",\"Content-Type\":\"application/json\"}"
+            },
+            "id": "01494100-487c-4658-8591-03014368e079",
+            "name": "Download Image",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                672,
+                176
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "enhancedUrl",
+                            "value": "=https://res.cloudinary.com/lumina/image/upload/e_improve,e_auto_color,e_auto_contrast,e_auto_brightness,q_auto:good,c_scale,w_{{$json.width}}/{{$json.public_id}}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "473a97c7-dc13-444e-9544-e1dc51071c81",
+            "name": "Enhance + Watermark URL",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 2,
+            "position": [
+                272,
+                368
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{$json.enhancedUrl}}",
+                "responseFormat": "file",
+                "options": {}
+            },
+            "id": "09bfece5-d0f4-47b3-af27-62b73091bb9d",
+            "name": "Download Enhanced Image",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                672,
+                368
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "enhance-images",
+                "responseMode": "responseNode",
+                "options": {
+                    "allowedOrigins": "*"
+                }
+            },
+            "id": "baf4a4c7-45b3-4c8c-b107-3e9b8d1aaf78",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                -720,
+                176
+            ],
+            "webhookId": "66b83363-db77-4276-8a4e-6a0fce34736b"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.cloudinary.com/v1_1/lumina/image/upload",
+                "sendBody": true,
+                "contentType": "multipart-form-data",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "parameterType": "formBinaryData",
+                            "name": "file",
+                            "inputDataFieldName": "file"
+                        },
+                        {
+                            "name": "upload_preset",
+                            "value": "Lumina"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "4186869c-ad40-4af3-abca-702a5c264c51",
+            "name": "Upload to Cloudinary1",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                96,
+                368
+            ]
+        },
+        {
+            "parameters": {
+                "requestMethod": "POST",
+                "url": "https://www.googleapis.com/drive/v3/files",
+                "jsonParameters": true,
+                "options": {},
+                "bodyParametersJson": "{\n  \"name\": \"Lumina_outputs\",\n  \"mimeType\": \"application/vnd.google-apps.folder\"\n}\n",
+                "headerParametersJson": "={\"Authorization\":\"Bearer {{$node[\"Webhook\"].json.body.accessToken}}\",\"Content-Type\":\"application/json\"}"
+            },
+            "id": "af1f569e-ed70-4645-bb7a-57f8ccd7efc1",
+            "name": "Create Output Folder",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 2,
+            "position": [
+                -112,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\n  \"success\": true\n}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.5,
+            "position": [
+                672,
+                32
+            ],
+            "id": "9585d9c5-4780-4144-8358-c2ea02cd41ad",
+            "name": "Respond to Webhook"
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\n  \"success\": false,\n  \"error\": true\n}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.5,
+            "position": [
+                -320,
+                352
+            ],
+            "id": "8341a8f1-deb6-4389-8288-b18026bf2e08",
+            "name": "Respond to Webhook1"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://www.googleapis.com/upload/drive/v3/files?uploadType=media&supportsAllDrives=true&name=lumina_{{$now}}.png&parents={{$node[\"Explode Files\"].json.folderId}}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{$node['Explode Files'].json.accessToken}}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "={{$binary.data.mimeType}}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "contentType": "binaryData",
+                "inputDataFieldName": "data",
+                "options": {}
+            },
+            "name": "Drive Upload (Media)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                96,
+                560
+            ],
+            "id": "167cdd01-58ba-472b-a123-0b9fe31bbbbc"
+        },
+        {
+            "parameters": {
+                "method": "PATCH",
+                "url": "=https://www.googleapis.com/drive/v3/files/{{$json.id}}?supportsAllDrives=true&addParents={{$node['Explode Files'].json.folderId}}&removeParents=root",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{$node['Explode Files'].json.accessToken}}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"name\":\"lumina_{{$now}}.png\"\n}",
+                "options": {}
+            },
+            "id": "551b6033-854b-451c-9557-cad3d6e8ce6e",
+            "name": "Set Name & Folder",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                272,
+                560
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                496,
+                176
+            ],
+            "id": "f803abc1-068c-40d6-b855-85893143b6e0",
+            "name": "Loop Over Items"
+        }
+    ],
+    "connections": {
+        "Validate Input": {
+            "main": [
+                [
+                    {
+                        "node": "Search Output Folder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Respond to Webhook1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Search Output Folder": {
+            "main": [
+                [
+                    {
+                        "node": "Folder Exists?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Folder Exists?": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize FolderId",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Create Output Folder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize FolderId": {
+            "main": [
+                [
+                    {
+                        "node": "Explode Files",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Explode Files": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Over Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Download Image": {
+            "main": [
+                [
+                    {
+                        "node": "Upload to Cloudinary1",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Enhance + Watermark URL": {
+            "main": [
+                [
+                    {
+                        "node": "Download Enhanced Image",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Download Enhanced Image": {
+            "main": [
+                [
+                    {
+                        "node": "Drive Upload (Media)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Input",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload to Cloudinary1": {
+            "main": [
+                [
+                    {
+                        "node": "Enhance + Watermark URL",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Output Folder": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize FolderId",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Drive Upload (Media)": {
+            "main": [
+                [
+                    {
+                        "node": "Set Name & Folder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Name & Folder": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Over Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop Over Items": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Download Image",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "instanceId": "95553460dea738030592224c02b12ec99dc521bbc668ef859ec52e9ffd7e6119"
+    }
+}

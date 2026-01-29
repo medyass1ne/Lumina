@@ -1,0 +1,44 @@
+{
+  "name": "image_manipulator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "watch": "node src/worker/watcher.js"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
+    "fabric": "^5.3.0",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.562.0",
+    "mongoose": "^9.1.5",
+    "next": "16.1.1",
+    "next-auth": "^4.24.13",
+    "node-cron": "^4.2.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-easy-crop": "^5.5.6",
+    "react-loading-skeleton": "^3.5.0",
+    "sharp": "^0.34.5",
+    "tailwind-merge": "^3.4.0",
+    "undici": "^7.19.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "framer-motion": "^12.23.26",
+    "tailwindcss": "^4",
+    "typescript": "^5.9.3",
+    "zustand": "^5.0.9"
+  }
+}

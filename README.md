@@ -33,8 +33,8 @@ Lumina is a powerful Next.js application designed to automate image processing w
 
 ### 1. Clone & Install
 ```bash
-git clone <repository-url>
-cd image_manipulator
+git clone https://github.com/medyass1ne/Lumina.git
+cd Lumina
 npm install
 ```
 
@@ -79,8 +79,8 @@ npm run watch
     - Click "Select Files" to pick from Drive.
     - Click "Enhance" to apply the template immediately.
 5.  **Automate**:
-    - Open "Listener Settings" (Ear Icon).
-    - Select a Folder ID to watch.
+    - Open "Listener Settings".
+    - Select a Folder to watch.
     - Choose a Template to apply.
     - Enable the Watcher.
     - The `npm run watch` service will now pick up new files in that folder every minute!

@@ -33,7 +33,7 @@ Lumina is a powerful Next.js application designed to automate image processing w
 
 ### 1. Clone & Install
 ```bash
-git clone <repository-url>
+git clone https://github.com/medyass1ne/Lumina.git
 cd image_manipulator
 npm install
 ```

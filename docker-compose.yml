@@ -1,0 +1,40 @@
+services:
+  web:
+    image: lumina-web
+    build: .
+    container_name: lumina_web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/lumina
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      - mongo
+    env_file:
+      - .env.local
+
+  watcher:
+    image: lumina-watcher
+    build: .
+    container_name: lumina_watcher
+    restart: always
+    command: [ "npm", "run", "watch" ]
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/lumina
+    depends_on:
+      - mongo
+    env_file:
+      - .env.local
+
+  mongo:
+    image: mongo:latest
+    container_name: lumina_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

@@ -27,7 +27,7 @@ Lumina is a powerful Next.js application designed to automate image processing w
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
-- Node.js (v18+)
+- Node.js (v20+)
 - MongoDB (Local or Atlas)
 - Google Cloud Console Project (for Drive API & OAuth)
 

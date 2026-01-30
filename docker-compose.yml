@@ -9,6 +9,7 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongo:27017/lumina
       - NEXTAUTH_URL=http://localhost:3000
+      - N8N_WEBHOOK_URL=http://host.docker.internal:5678/webhook/enhance-images
     depends_on:
       - mongo
     env_file:

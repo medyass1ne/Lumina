@@ -32,7 +32,7 @@ services:
     container_name: lumina_db
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017" # Exposed on 27018 to avoid conflict with local Mongo (27017)
     volumes:
       - mongo_data:/data/db
 

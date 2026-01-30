@@ -34,7 +34,7 @@ Lumina is a powerful Next.js application designed to automate image processing w
 ### 1. Clone & Install
 ```bash
 git clone https://github.com/medyass1ne/Lumina.git
-cd image_manipulator
+cd Lumina
 npm install
 ```
 
@@ -69,6 +69,44 @@ Runs the Cron job to monitor Drive folders.
 ```bash
 npm run watch
 ```
+
+### 4. Setup Automation (N8n)
+Lumina uses **n8n** to handle image processing workflows (webhooks).
+
+1.  **Install n8n Locally**:
+    ```bash
+    npm install n8n -g
+    ```
+2.  **Start n8n**:
+    ```bash
+    n8n
+    ```
+    *(Accessible at `http://localhost:5678`)*
+3.  **Import Workflow**:
+    - Open n8n in your browser.
+    - Create a **New Workflow**.
+    - Copy the contents of `n8n-workflow-code.json` from this repository.
+    - Paste it directly into the n8n editor canvas (Ctrl+V).
+    - **Activate** the workflow.
+
+## 🐳 Docker Deployment
+
+You can run the entire stack (Web + Watcher + MongoDB) using Docker.
+
+### 1. Prerequisites
+- Docker & Docker Compose installed.
+
+### 2. Run with Docker
+Since we use a custom setup, the best way is to build and run locally:
+
+1.  Ensure your `.env.local` file is set up (see above).
+2.  Run the stack:
+    ```bash
+    docker compose up --build -d
+    ```
+    *(The `--build` flag ensures your latest code changes are included)*.
+
+**Note on Data:** Docker uses a volume `mongo_data` for the database. Access it via Compass at `mongodb://localhost:27018` (if running).
 
 ## 📖 Usage Guide
 

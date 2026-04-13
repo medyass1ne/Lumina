@@ -207,8 +207,10 @@ primaryStage.show();</code></pre>
                             <strong>Interacting with the user:</strong> <code>TextField</code> accepts text, while <code>PasswordField</code> replaces typed characters with dots. <code>ComboBox</code> is a dropdown list (which can be made searchable/editable). When using <code>RadioButton</code> (where the user must pick only one option, like Gender), you MUST assign them to the same <code>ToggleGroup</code> to enforce single-selection. An <code>Alert</code> pops up a separate dialog box to warn or inform the user.
                         </div>
 <pre><code class="language-java">// Input Field Configurations
-TextField user = new TextField(); user.setPrefColumnCount(15);
-PasswordField pass = new PasswordField(); pass.setPromptText("Your password");
+TextField user = new TextField();
+user.setPrefColumnCount(15);
+PasswordField pass = new PasswordField();
+pass.setPromptText("Your password");
 
 // Combobox (Dropdowns)
 ComboBox&lt;String&gt; combo = new ComboBox&lt;&gt;();
@@ -217,7 +219,8 @@ combo.setEditable(true); // Allows custom typing
 
 // Grouping RadioButtons (Only one selectable)
 ToggleGroup group = new ToggleGroup();
-RadioButton rb1 = new RadioButton("Male"); rb1.setToggleGroup(group);
+RadioButton rb1 = new RadioButton("Male");
+rb1.setToggleGroup(group);
 
 // Menus
 MenuBar menuBar = new MenuBar();
@@ -436,12 +439,16 @@ list.removeIf(elem -> elem.equals("DeleteMe"));</code></pre>
 <pre><code class="language-java">// 1. COMPARABLE (Internal Natural Sort by Grade)
 public class Eleve implements Comparable&lt;Eleve&gt; {
     public double moyenne;
-    public int compareTo(Eleve autre) { return Double.compare(this.moyenne, autre.moyenne); }
+    public int compareTo(Eleve autre) {
+	return Double.compare(this.moyenne, autre.moyenne);
+	}
 }
 
 // 2. COMPARATOR (External Custom Sort by Age)
 class TriParAge implements Comparator&lt;Person&gt; {
-    public int compare(Person p1, Person p2) { return Integer.compare(p1.getAge(), p2.getAge()); }
+    public int compare(Person p1, Person p2) { 
+	return Integer.compare(p1.getAge(), p2.getAge()); 
+	}
 }
 
 // Execution

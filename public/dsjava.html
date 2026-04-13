@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaFX & Collections Detailed Beginner's Guide</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            margin: 20px auto; 
+            max-width: 1000px;
+            background-color: #f4f7f6; 
+            color: #333;
+        }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin-bottom: 25px; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+        }
+        th, td { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            vertical-align: top;
+        }
+        th { 
+            background-color: #2980b9; 
+            color: white; 
+            width: 25%;
+        }
+        .code-block { 
+            background-color: #282c34; 
+            color: #61dafb; 
+            padding: 10px; 
+            border-radius: 5px; 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 JavaFX & Collections: Practical Guide with Examples</h1>
+
+    <div class="container">
+        <h2>1. JavaFX Core Interface Elements</h2>
+        <p>JavaFX provides the structural components and interactive widgets needed to build graphical applications [1, 2].</p>
+        <table>
+            <tr><th>Element</th><th>Explanation & Practical Use</th></tr>
+            
+            <tr>
+                <td><code>Application</code>, <code>launch()</code>, & <code>start()</code></td>
+                <td>
+                    A JavaFX application must inherit from the <code>Application</code> class [1]. The <code>launch()</code> function starts the app, which then calls the <code>start(Stage)</code> method where you set up your initial window [1, 3, 4].
+                    <div class="code-block">
+public class Main extends Application {
+    public static void main(String[] args) {
+        launch(args); // Boots the app
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        // App setup goes here
+    }
+}</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Stage</code> & <code>Scene</code></td>
+                <td>
+                    The <code>Stage</code> is your main application window, and the <code>Scene</code> is the background container holding all your visual components [1, 2]. You attach the Scene to the Stage to make elements visible [5].
+                    <div class="code-block">
+Scene scene = new Scene(root, 500, 300);
+primaryStage.setScene(scene);
+primaryStage.setTitle("LOGIN");
+primaryStage.show();</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Label</code>, <code>TextField</code> & <code>PasswordField</code></td>
+                <td>
+                    <code>Label</code> displays static text, <code>TextField</code> accepts normal text input, and <code>PasswordField</code> hides the text typed by the user [6, 7].
+                    <div class="code-block">
+Label title = new Label("Search");
+TextField username = new TextField();
+PasswordField pf = new PasswordField();
+pf.setPromptText("Your password");</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Button</code> & <code>ComboBox</code></td>
+                <td>
+                    A <code>Button</code> triggers actions when clicked, and can contain text or images [8]. A <code>ComboBox</code> allows users to select one option from a dropdown list [9].
+                    <div class="code-block">
+Button acceptBtn = new Button("Accept");
+
+ComboBox combo = new ComboBox();
+combo.getItems().addAll("Option 1", "Option 2");</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>Layouts:</strong><br><code>BorderPane</code> & <code>HBox</code></td>
+                <td>
+                    Layouts automatically organize widgets. <code>BorderPane</code> places elements in 5 zones (Top, Bottom, Left, Right, Center) [10]. <code>HBox</code> lines up elements horizontally in a row [10, 11].
+                    <div class="code-block">
+// BorderPane Example
+BorderPane bp = new BorderPane();
+bp.setCenter(new Button("centre"));
+
+// HBox Example
+HBox hbox = new HBox(); 
+hbox.setPadding(new Insets(15, 12, 15, 12));
+hbox.setSpacing(10);</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Alert</code> (Dialog Boxes)</td>
+                <td>
+                    Used to pop up a separate dialog window to notify the user, show warnings, or confirm actions [12].
+                    <div class="code-block">
+Alert alert = new Alert(AlertType.INFORMATION);
+alert.setTitle("Test Connection");
+alert.setHeaderText("Results:");
+alert.setContentText("Connected successfully!");
+alert.showAndWait();</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>2. Java Generics & Collections</h2>
+        <p>The Java Collections Framework provides standard data structures like Lists and Maps, and Generics (<code>&lt;T&gt;</code>) ensure that your data stays strictly organized by type [13, 14].</p>
+        <table>
+            <tr><th>Element</th><th>Explanation & Practical Use</th></tr>
+            
+            <tr>
+                <td><code>ArrayList&lt;E&gt;</code></td>
+                <td>
+                    A dynamic array that resizes itself automatically. Unlike standard arrays, they are highly recommended because they strictly enforce the data type using Generics (e.g., <code>&lt;Integer&gt;</code>), preventing crashes [13-15].
+                    <div class="code-block">
+ArrayList&lt;Integer&gt; listeEntiers = new ArrayList&lt;&gt;();
+listeEntiers.add(56);
+Integer x = listeEntiers.get(0); // Retrieves 56</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Map&lt;K, V&gt;</code> & <code>HashMap</code></td>
+                <td>
+                    Works like a dictionary, mapping a unique "Key" (K) to a "Value" (V) [14, 16]. Great for looking up data quickly without looping.
+                    <div class="code-block">
+Map&lt;String, Integer&gt; villes = new HashMap&lt;&gt;();
+villes.put("Paris", 75); // Add key-value
+villes.put("Montpellier", 34);
+
+// Retrieve value using its key
+Integer zip = villes.get("Montpellier"); // Gets 34</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td><code>Comparable&lt;T&gt;</code>, <code>compareTo()</code> & <code>Collections.sort()</code></td>
+                <td>
+                    To sort custom objects automatically (like Students or Cities), the object's class must implement <code>Comparable</code> and define a <code>compareTo()</code> function [17, 18]. Once set up, you can sort entire lists with a single command [19].
+                    <div class="code-block">
+public class Eleve implements Comparable&lt;Eleve&gt; {
+    public int moyenne;
+
+    // Define how to compare two students
+    public int compareTo(Eleve autre) {
+        if (this.moyenne < autre.moyenne) return -1;
+        if (this.moyenne > autre.moyenne) return 1;
+        return 0;
+    }
+}
+
+// In your main code:
+List&lt;Eleve&gt; le = new ArrayList&lt;&gt;();
+Collections.sort(le); // Automatically sorts the list</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

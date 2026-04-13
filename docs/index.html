@@ -3,198 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaFX & Collections Detailed Beginner's Guide</title>
+    <title>JavaFX & Collections</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
     <style>
+        /* Global Reset for precise width calculation */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             line-height: 1.6; 
-            margin: 20px auto; 
-            max-width: 1000px;
-            background-color: #f4f7f6; 
-            color: #333;
+            margin: 0 auto; 
+            padding: 20px 15px; 
+            max-width: 1100px;
+            background-color: #F5EFE6; 
+            color: #1E3A5F; 
         }
-        h1, h2 { color: #2c3e50; text-align: center; }
-        .container { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            margin-bottom: 25px; 
+        
+        h1 { 
+            color: #2E6F95; 
+            text-align: center; 
+            font-weight: bold; 
+            border-bottom: 3px solid #2E6F95; 
+            padding-bottom: 10px; 
+            margin-bottom: 25px;
         }
+        
+        h2 { 
+            color: #1E88E5; 
+            margin-top: 35px; 
+            margin-bottom: 15px;
+            padding-bottom: 5px; 
+        }
+
+        /* Responsive Table Design */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden; /* Clips corners */
+            margin-bottom: 25px;
+        }
+
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            margin-top: 15px; 
+            table-layout: fixed; /* Forces strict column widths */
         }
+        
         th, td { 
-            padding: 12px; 
-            border: 1px solid #ddd; 
+            padding: 18px; 
+            border: 1px solid #e0e0e0; 
             vertical-align: top;
+            word-wrap: break-word; /* Prevents text overflow */
         }
+        
         th { 
-            background-color: #2980b9; 
+            background-color: #2E6F95; 
             color: white; 
-            width: 25%;
+            font-size: 1.1em;
+            text-align: left;
         }
-        .code-block { 
-            background-color: #282c34; 
-            color: #61dafb; 
-            padding: 10px; 
-            border-radius: 5px; 
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            overflow-x: auto;
-            margin-top: 10px;
+
+        /* Left Column (Brief Title) vs Right Column (More Content) */
+        th:first-child, td:first-child {
+            width: 32%; /* Brief left column */
+            background-color: #fcfcfc;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin: 3px;
+            font-family: 'Consolas', monospace;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        /* Strict Code Block Styling */
+        pre {
+            margin-top: 0;
+            border-radius: 6px;
+            padding: 12px;
+            background-color: #282c34;
+            overflow-x: auto; /* Horizontal scroll ONLY inside code block */
+            max-width: 100%;
+            display: block;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13.5px;
+            white-space: pre; /* Strictly prevents text wrapping */
+        }
+
+        /* Mobile View: Stacks tables into cards for smaller screens */
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr { 
+                display: block; 
+                width: 100%; 
+            }
+            th { display: none; } /* Hide headers on mobile */
+            td:first-child { 
+                background-color: #eef2f5; 
+                border-bottom: none; 
+                padding-bottom: 10px;
+                width: 100%;
+            }
+            td:last-child { 
+                border-top: none; 
+                padding-top: 10px;
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>🚀 JavaFX & Collections: Practical Guide with Examples</h1>
+    <h1>JavaFX & Collections (Beginner Oriented)</h1>
 
-    <div class="container">
-        <h2>1. JavaFX Core Interface Elements</h2>
-        <p>JavaFX provides the structural components and interactive widgets needed to build graphical applications [1, 2].</p>
+    <h2>1. JavaFX Core & Layouts</h2>
+    <div class="table-container">
         <table>
-            <tr><th>Element</th><th>Explanation & Practical Use</th></tr>
-            
-            <tr>
-                <td><code>Application</code>, <code>launch()</code>, & <code>start()</code></td>
-                <td>
-                    A JavaFX application must inherit from the <code>Application</code> class [1]. The <code>launch()</code> function starts the app, which then calls the <code>start(Stage)</code> method where you set up your initial window [1, 3, 4].
-                    <div class="code-block">
-public class Main extends Application {
-    public static void main(String[] args) {
-        launch(args); // Boots the app
-    }
+            <thead>
+                <tr>
+                    <th>Concepts & Classes</th>
+                    <th>Detailed Explanation & Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>App Lifecycle:</strong><br>
+                        <span class="badge">Application</span> <span class="badge">launch()</span> <span class="badge">init()</span> <span class="badge">start()</span> <span class="badge">stop()</span><br><br>
+                        <strong>Core Components:</strong><br>
+                        <span class="badge">Stage</span> <span class="badge">Scene</span> <span class="badge">FXMLLoader</span> <span class="badge">Parent</span><br><br>
+                        <strong>Containers (Layouts):</strong><br>
+                        <span class="badge">HBox</span> <span class="badge">VBox</span> <span class="badge">GridPane</span> <span class="badge">BorderPane</span> <span class="badge">StackPane</span> <span class="badge">ScrollPane</span> <span class="badge">SplitPane</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>How it works:</strong> Every JavaFX app inherits from <code>Application</code>. The <code>launch()</code> method starts the app, which eventually calls <code>start(Stage)</code>. The <code>Stage</code> is your actual window, and the <code>Scene</code> is the canvas inside it. You load your visual design (built in Scene Builder) using <code>FXMLLoader</code>. <br><br>
+                            <strong>Layouts:</strong> Elements are organized using containers. <code>HBox</code> lines widgets up horizontally, while <code>VBox</code> stacks them vertically. <code>SplitPane</code> gives you a draggable divider between two areas, and <code>ScrollPane</code> adds scrollbars if your content is larger than the screen.
+                        </div>
+<pre><code class="language-java">// 1. Layout Methods (Spacing & Sizing)
+HBox hbox = new HBox();
+hbox.setPadding(new Insets(15, 12, 15, 12)); // Inner padding inside the box
+hbox.setSpacing(10); // Space between widgets inside the box
+hbox.getChildren().addAll(node1, node2); // Adding elements
 
-    @Override
-    public void start(Stage primaryStage) {
-        // App setup goes here
-    }
-}</div>
-                </td>
-            </tr>
+// 2. Navigation Layout
+SplitPane split = new SplitPane();
+split.setOrientation(Orientation.VERTICAL); // Adds a draggable vertical divider
 
-            <tr>
-                <td><code>Stage</code> & <code>Scene</code></td>
-                <td>
-                    The <code>Stage</code> is your main application window, and the <code>Scene</code> is the background container holding all your visual components [1, 2]. You attach the Scene to the Stage to make elements visible [5].
-                    <div class="code-block">
-Scene scene = new Scene(root, 500, 300);
-primaryStage.setScene(scene);
-primaryStage.setTitle("LOGIN");
-primaryStage.show();</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td><code>Label</code>, <code>TextField</code> & <code>PasswordField</code></td>
-                <td>
-                    <code>Label</code> displays static text, <code>TextField</code> accepts normal text input, and <code>PasswordField</code> hides the text typed by the user [6, 7].
-                    <div class="code-block">
-Label title = new Label("Search");
-TextField username = new TextField();
-PasswordField pf = new PasswordField();
-pf.setPromptText("Your password");</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td><code>Button</code> & <code>ComboBox</code></td>
-                <td>
-                    A <code>Button</code> triggers actions when clicked, and can contain text or images [8]. A <code>ComboBox</code> allows users to select one option from a dropdown list [9].
-                    <div class="code-block">
-Button acceptBtn = new Button("Accept");
-
-ComboBox combo = new ComboBox();
-combo.getItems().addAll("Option 1", "Option 2");</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td><strong>Layouts:</strong><br><code>BorderPane</code> & <code>HBox</code></td>
-                <td>
-                    Layouts automatically organize widgets. <code>BorderPane</code> places elements in 5 zones (Top, Bottom, Left, Right, Center) [10]. <code>HBox</code> lines up elements horizontally in a row [10, 11].
-                    <div class="code-block">
-// BorderPane Example
-BorderPane bp = new BorderPane();
-bp.setCenter(new Button("centre"));
-
-// HBox Example
-HBox hbox = new HBox(); 
-hbox.setPadding(new Insets(15, 12, 15, 12));
-hbox.setSpacing(10);</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td><code>Alert</code> (Dialog Boxes)</td>
-                <td>
-                    Used to pop up a separate dialog window to notify the user, show warnings, or confirm actions [12].
-                    <div class="code-block">
-Alert alert = new Alert(AlertType.INFORMATION);
-alert.setTitle("Test Connection");
-alert.setHeaderText("Results:");
-alert.setContentText("Connected successfully!");
-alert.showAndWait();</div>
-                </td>
-            </tr>
+// 3. Application Lifecycle Loading
+Parent root = new FXMLLoader(getClass().getResource("login.fxml")).load();
+primaryStage.setScene(new Scene(root, 500, 300));
+primaryStage.setTitle("My App"); 
+primaryStage.show();</code></pre>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
-    <div class="container">
-        <h2>2. Java Generics & Collections</h2>
-        <p>The Java Collections Framework provides standard data structures like Lists and Maps, and Generics (<code>&lt;T&gt;</code>) ensure that your data stays strictly organized by type [13, 14].</p>
+    <h2>2. JavaFX UI Controls & Menus</h2>
+    <div class="table-container">
         <table>
-            <tr><th>Element</th><th>Explanation & Practical Use</th></tr>
-            
-            <tr>
-                <td><code>ArrayList&lt;E&gt;</code></td>
-                <td>
-                    A dynamic array that resizes itself automatically. Unlike standard arrays, they are highly recommended because they strictly enforce the data type using Generics (e.g., <code>&lt;Integer&gt;</code>), preventing crashes [13-15].
-                    <div class="code-block">
-ArrayList&lt;Integer&gt; listeEntiers = new ArrayList&lt;&gt;();
-listeEntiers.add(56);
-Integer x = listeEntiers.get(0); // Retrieves 56</div>
-                </td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Concepts & Classes</th>
+                    <th>Detailed Explanation & Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Inputs:</strong><br>
+                        <span class="badge">TextField</span> <span class="badge">PasswordField</span> <span class="badge">ComboBox</span> <span class="badge">DatePicker</span><br><br>
+                        <strong>Buttons & Display:</strong><br>
+                        <span class="badge">Button</span> <span class="badge">RadioButton</span> <span class="badge">ToggleGroup</span> <span class="badge">Label</span> <span class="badge">Alert</span><br><br>
+                        <strong>Menus:</strong><br>
+                        <span class="badge">MenuBar</span> <span class="badge">Menu</span> <span class="badge">MenuItem</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Interacting with the user:</strong> <code>TextField</code> accepts text, while <code>PasswordField</code> replaces typed characters with dots. <code>ComboBox</code> is a dropdown list (which can be made searchable/editable). When using <code>RadioButton</code> (where the user must pick only one option, like Gender), you MUST assign them to the same <code>ToggleGroup</code> to enforce single-selection. An <code>Alert</code> pops up a separate dialog box to warn or inform the user.
+                        </div>
+<pre><code class="language-java">// Input Field Configurations
+TextField user = new TextField(); user.setPrefColumnCount(15);
+PasswordField pass = new PasswordField(); pass.setPromptText("Your password");
 
-            <tr>
-                <td><code>Map&lt;K, V&gt;</code> & <code>HashMap</code></td>
-                <td>
-                    Works like a dictionary, mapping a unique "Key" (K) to a "Value" (V) [14, 16]. Great for looking up data quickly without looping.
-                    <div class="code-block">
-Map&lt;String, Integer&gt; villes = new HashMap&lt;&gt;();
-villes.put("Paris", 75); // Add key-value
-villes.put("Montpellier", 34);
+// Combobox (Dropdowns)
+ComboBox&lt;String&gt; combo = new ComboBox&lt;&gt;();
+combo.getItems().addAll("Option 1", "Option 2");
+combo.setEditable(true); // Allows custom typing
 
-// Retrieve value using its key
-Integer zip = villes.get("Montpellier"); // Gets 34</div>
-                </td>
-            </tr>
+// Grouping RadioButtons (Only one selectable)
+ToggleGroup group = new ToggleGroup();
+RadioButton rb1 = new RadioButton("Male"); rb1.setToggleGroup(group);
 
-            <tr>
-                <td><code>Comparable&lt;T&gt;</code>, <code>compareTo()</code> & <code>Collections.sort()</code></td>
-                <td>
-                    To sort custom objects automatically (like Students or Cities), the object's class must implement <code>Comparable</code> and define a <code>compareTo()</code> function [17, 18]. Once set up, you can sort entire lists with a single command [19].
-                    <div class="code-block">
-public class Eleve implements Comparable&lt;Eleve&gt; {
-    public int moyenne;
+// Menus
+MenuBar menuBar = new MenuBar();
+Menu fileMenu = new Menu("File");
+fileMenu.getItems().addAll(new MenuItem("Open"), new MenuItem("Exit"));
+menuBar.getMenus().add(fileMenu);</code></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Styling & Advanced:</strong><br>
+                        <span class="badge">getStylesheets()</span> <span class="badge">setStyle()</span><br>
+                        <span class="badge">JFXButton</span> <span class="badge">JFXCheckBox</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Making it beautiful:</strong> You can apply a <code>.css</code> file to a Scene just like a website, or inject CSS directly into a widget using <code>.setStyle()</code>. The <strong>JFoenix</strong> library gives you classes like <code>JFXButton</code> which automatically apply Google's modern Material Design animations to your interface.
+                        </div>
+<pre><code class="language-java">// Linking CSS and inline styling
+scene.getStylesheets().add(getClass().getResource("app.css").toExternalForm());
+button.setStyle("-fx-background-color: darkslateblue; -fx-text-fill: white;");
 
-    // Define how to compare two students
-    public int compareTo(Eleve autre) {
-        if (this.moyenne < autre.moyenne) return -1;
-        if (this.moyenne > autre.moyenne) return 1;
-        return 0;
-    }
+// JFoenix Material Design classes
+JFXButton btn = new JFXButton("Material Design Button");</code></pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+	
+	<hr>
+
+    <h2>3. Java Collections Core API</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Concepts & Classes</th>
+                    <th>Detailed Explanation & Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Modification:</strong><br>
+                        <span class="badge">add()</span> <span class="badge">addAll()</span><br>
+                        <span class="badge">remove()</span> <span class="badge">removeAll()</span><br>
+                        <span class="badge">retainAll()</span> <span class="badge">clear()</span><br><br>
+                        <strong>Inspection:</strong><br>
+                        <span class="badge">contains()</span> <span class="badge">containsAll()</span><br>
+                        <span class="badge">isEmpty()</span> <span class="badge">size()</span><br>
+                        <span class="badge">toArray()</span> <span class="badge">iterator()</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>The Foundation:</strong> The <code>Collection</code> interface guarantees that ALL lists, sets, and queues share these core methods. 
+                            <br>• <code>contains()</code> searches the list to see if a specific item exists.
+                            <br>• <code>retainAll()</code> is powerful: you give it a second collection, and it deletes everything in your first collection EXCEPT the items that exist in both (intersection).
+                            <br>• <code>removeAll()</code> deletes a whole batch of items at once.
+                            <br>• <code>isEmpty()</code> checks if the list is blank, and <code>size()</code> counts the items.
+                        </div>
+<pre><code class="language-java">Collection&lt;String&gt; items = new ArrayList&lt;&gt;();
+items.add("Apple"); 
+items.addAll(otherCollection); // Merges another collection into this one
+
+boolean hasApple = items.contains("Apple"); // Returns true if "Apple" is found
+boolean hasAll = items.containsAll(otherCollection); // Checks if all exist
+
+items.retainAll(otherCollection); // Keeps ONLY items that also exist in otherCollection
+items.removeAll(otherCollection); // Removes items that exist in otherCollection
+
+items.clear(); // Empties the entire collection instantly
+boolean empty = items.isEmpty(); // Returns true if size is 0
+int count = items.size(); // Returns total item count</code></pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>4. Data Structures (Lists, Sets, Maps)</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Concepts & Classes</th>
+                    <th>Detailed Explanation & Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Lists:</strong><br>
+                        <span class="badge">ArrayList</span> <span class="badge">LinkedList</span><br>
+                        <span class="badge">get(index)</span> <span class="badge">set(index, E)</span><br>
+                        <span class="badge">indexOf()</span> <span class="badge">subList()</span><br><br>
+                        <strong>Sets & Queues:</strong><br>
+                        <span class="badge">HashSet</span> <span class="badge">TreeSet</span><br>
+                        <span class="badge">Queue</span> <span class="badge">ArrayDeque</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Lists vs Sets:</strong> 
+                            <br>• <strong>Lists</strong> keep items in the exact order you add them. You can grab an item by its index number (<code>get(0)</code>).
+                            <br>• <strong>Sets</strong> are strict: they automatically reject duplicate items. A <code>TreeSet</code> is magical because it automatically sorts your data (alphabetically or numerically) as you add it!
+                        </div>
+<pre><code class="language-java">// LISTS: Access by index, duplicates allowed
+List&lt;String&gt; list = new ArrayList&lt;&gt;(); 
+list.add(0, "First"); // Inserts exactly at position 0
+list.set(0, "Replaced"); // Replaces element at position 0
+int pos = list.indexOf("Replaced"); // Finds the index number of an item
+
+// SETS: Rejects duplicates, TreeSet automatically sorts!
+Set&lt;String&gt; uniqueNames = new TreeSet&lt;&gt;();
+uniqueNames.add("Zebra");
+boolean added = uniqueNames.add("Apple"); // Returns true
+boolean addedAgain = uniqueNames.add("Apple"); // Returns false! Set size is 2.</code></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Maps:</strong><br>
+                        <span class="badge">HashMap</span> <span class="badge">TreeMap</span><br>
+                        <span class="badge">put()</span> <span class="badge">get()</span> <span class="badge">remove()</span><br>
+                        <span class="badge">containsKey()</span> <span class="badge">values()</span><br>
+                        <span class="badge">entrySet()</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Dictionaries (Maps):</strong> A Map doesn't use index numbers. Instead, it links a "Value" to a unique "Key" (like linking a Zip Code to a City Name). You use <code>put()</code> to store the pair, and <code>get(key)</code> to instantly retrieve the value later without having to search through the whole list.
+                        </div>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+map.put("Paris", 75); // Adds or replaces key-value
+map.putAll(otherMap); // Merges another map into this one
+
+int zip = map.get("Paris"); // Instantly retrieves 75
+boolean hasKey = map.containsKey("Paris"); // Checks if key exists
+
+// Iterating safely over a Map
+for (Map.Entry&lt;String, Integer&gt; entry : map.entrySet()) {
+    System.out.println(entry.getKey() + " -> " + entry.getValue());
+}</code></pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>5. Iteration, Generics & Sorting</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Concepts & Classes</th>
+                    <th>Detailed Explanation & Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Generics:</strong><br>
+                        <span class="badge">&lt;T&gt;</span> <span class="badge">&lt;K, V&gt;</span><br>
+                        <span class="badge">&lt;? extends T&gt;</span> (Upper Bound)<br>
+                        <span class="badge">&lt;? super E&gt;</span> (Lower Bound)
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Type Safety:</strong> Generics (<code>&lt;T&gt;</code>) prevent crashes by forcing a collection to hold only one type of data. Wildcards (<code>? extends Employe</code>) are flexible: they let a method accept a list of <code>Employe</code> OR any of its sub-classes. However, to prevent data corruption, Java locks these wildcard lists to "Read-Only"—you cannot add to them!
+                        </div>
+<pre><code class="language-java">// Generic Class allowing any Object type 'T'
+public class Box&lt;T&gt; { private T item; }
+
+// Upper Bound (Read-Only): Accepts 'Employe' or its subclasses (like Vendeur)
+public void calculate(ArrayList&lt;? extends Employe&gt; list) { 
+    // You can READ, but you CANNOT use list.add() here!
+}</code></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Iteration:</strong><br>
+                        <span class="badge">Iterator</span> <span class="badge">ListIterator</span><br>
+                        <span class="badge">forEach(lambda)</span> <span class="badge">removeIf()</span><br>
+                        <span class="badge">hasNext()</span> <span class="badge">remove()</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Safe Deletion:</strong> If you try to use <code>list.remove()</code> while looping inside a standard <code>for-each</code> loop, your app will crash. To safely delete items while looping, you must explicitly use an <code>Iterator</code>, or use the cleaner modern Java Lambda function: <code>removeIf()</code>.
+                        </div>
+<pre><code class="language-java">// SAFE METHOD 1: Manual Iterator (Safe deletion during iteration)
+Iterator&lt;String&gt; it = list.iterator();
+while(it.hasNext()) {
+    if(it.next().equals("DeleteMe")) { 
+        it.remove(); // This is safe! Never use standard list.remove() here.
+    } 
 }
 
-// In your main code:
-List&lt;Eleve&gt; le = new ArrayList&lt;&gt;();
-Collections.sort(le); // Automatically sorts the list</div>
-                </td>
-            </tr>
+// SAFE METHOD 2: Functional Lambda (Does the exact same thing in one line)
+list.removeIf(elem -> elem.equals("DeleteMe"));</code></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Sorting Objects:</strong><br>
+                        <span class="badge">Comparable&lt;T&gt;</span><br>
+                        <span class="badge">compareTo()</span><br>
+                        <span class="badge">Comparator&lt;T&gt;</span><br>
+                        <span class="badge">Collections.sort()</span>
+                    </td>
+                    <td>
+                        <div class="explanation">
+                            <strong>Custom Sorting Rules:</strong> Java doesn't know how to sort a custom <code>Eleve</code> (Student) object. 
+                            <br>• <strong>Comparable:</strong> You write this <em>inside</em> the Eleve class to define the natural default sort (e.g., sort by average grade). 
+                            <br>• <strong>Comparator:</strong> You write this <em>outside</em> the class as a separate tool when you need a secondary sorting rule (e.g., sort by Age instead of Grade).
+                        </div>
+<pre><code class="language-java">// 1. COMPARABLE (Internal Natural Sort by Grade)
+public class Eleve implements Comparable&lt;Eleve&gt; {
+    public double moyenne;
+    public int compareTo(Eleve autre) { return Double.compare(this.moyenne, autre.moyenne); }
+}
+
+// 2. COMPARATOR (External Custom Sort by Age)
+class TriParAge implements Comparator&lt;Person&gt; {
+    public int compare(Person p1, Person p2) { return Integer.compare(p1.getAge(), p2.getAge()); }
+}
+
+// Execution
+Collections.sort(listeEleves); // Sorts naturally via Comparable (Grade)
+Collections.sort(listePersonnes, new TriParAge()); // Sorts via Comparator (Age)</code></pre>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
+
 </body>
 </html>
